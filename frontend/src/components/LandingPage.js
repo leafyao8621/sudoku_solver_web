@@ -72,6 +72,7 @@ const LandingPage = (props) => {
                 alert("Error!");
             }
             setData(res.data.result);
+            alert("Success!");
         }).catch((err) => {
             alert(err);
         })
