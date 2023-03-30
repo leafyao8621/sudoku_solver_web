@@ -33,18 +33,45 @@ const LandingPage = (props) => {
                 );
             }
         );
+    const clear = () => {
+        setData(
+            (
+                () => {
+                    return (
+                        Array.from(
+                            Array(blockRow * blockColumn).keys()
+                        ).map(
+                            () => {
+                                return (
+                                    Array.from(
+                                        Array(
+                                            blockRow *
+                                            blockColumn
+                                        ).keys()
+                                    ).map(() => null)
+                                )
+                            }
+                        )
+                    );
+                }
+            )()
+        );
+    };
     const solve = () => {
         const payload =
             {
-                "block_row": blockRow,
-                "block_column": blockColumn,
-                "data": data
+                block_row: blockRow,
+                block_column: blockColumn,
+                data: data
             }
         axios.post(
             "http://localhost:8000/solve",
             payload
         ).then((res) => {
-            alert(res);
+            if (!res.data.success) {
+                alert("Error!");
+            }
+            setData(res.data.result);
         }).catch((err) => {
             alert(err);
         })
@@ -86,8 +113,16 @@ const LandingPage = (props) => {
                                                             {
                                                                 data[i][j] ===
                                                                 null ?
-                                                                "X" :
-                                                                data[i][j]
+                                                                (
+                                                                    blockColumn * blockRow > 9 ?
+                                                                    "XX" :
+                                                                    "X"
+                                                                ) :
+                                                                (
+                                                                    blockColumn * blockRow > 9 ?
+                                                                    `${data[i][j]}`.padStart(2, "0") :
+                                                                    data[i][j]
+                                                                )
                                                             }
                                                         </Button>
                                                     </td>
@@ -110,39 +145,51 @@ const LandingPage = (props) => {
                 <tbody>
                 {
                     Array.from(
-                        Array(blockColumn * blockRow).keys()
+                        Array(blockRow).keys()
                     ).map((i) => {
                         return (
                             <tr key={`contr${i}`}>
-                                <td key={`cont${i}`}>
-                                    <Button
-                                        onClick=
-                                        {
-                                            () => {
-                                                setData(
-                                                    Array.from(
-                                                        data.keys()
-                                                    ).map((j) => {
-                                                        return (
+                                {
+                                    Array.from(
+                                        Array(blockColumn).keys()
+                                    ).map((j) => {
+                                        return (
+                                            <td key={`cont${i}${j}`}>
+                                            <Button
+                                                onClick=
+                                                {
+                                                    () => {
+                                                        setData(
                                                             Array.from(
-                                                                data[j].keys()
+                                                                data.keys()
                                                             ).map((k) => {
                                                                 return (
-                                                                    j === selectedRow &&
-                                                                    k === selectedColumn ?
-                                                                    i + 1 :
-                                                                    data[j][k]
+                                                                    Array.from(
+                                                                        data[j].keys()
+                                                                    ).map((l) => {
+                                                                        return (
+                                                                            k === selectedRow &&
+                                                                            l === selectedColumn ?
+                                                                            i * blockColumn + j + 1 :
+                                                                            data[k][l]
+                                                                        );
+                                                                    })
                                                                 );
                                                             })
                                                         );
-                                                    })
-                                                );
-                                            }
-                                        }
-                                    >
-                                        {i + 1}
-                                    </Button>
-                                </td>
+                                                    }
+                                                }
+                                            >
+                                                {
+                                                    blockColumn * blockRow > 9 ?
+                                                    `${i * blockColumn + j + 1}`.padStart(2, "0") :
+                                                    i * blockColumn + j + 1
+                                                }
+                                            </Button>
+                                        </td>
+                                        )
+                                    })
+                                }
                             </tr>
                         )
                     })
@@ -174,7 +221,11 @@ const LandingPage = (props) => {
                                 }
                             }
                         >
-                            X
+                            {
+                                blockColumn * blockRow > 9 ?
+                                "XX" :
+                                "X"
+                            }
                         </Button>
                     </td>
                 </tr>
@@ -190,7 +241,7 @@ const LandingPage = (props) => {
                     <Label>Block Rows</Label>
                     <Input
                         type="number"
-                        max="5"
+                        max="4"
                         min="1"
                         defaultValue="3"
                         onChange={({ target }) => {
@@ -217,21 +268,45 @@ const LandingPage = (props) => {
                                         );
                                     }
                                 )()
-                            )
+                            );
                         }}
                     />
                     <Label>Block Columns</Label>
                     <Input
-                        max="5"
+                        type="number"
+                        max="4"
                         min="1"
                         defaultValue="3"
                         onChange={({ target }) => {
-                            setBlockColumn(target.value)
+                            const column = parseInt(target.value);
+                            setBlockColumn(column);
+                            setData(
+                                (
+                                    () => {
+                                        return (
+                                            Array.from(
+                                                Array(blockRow * column).keys()
+                                            ).map(
+                                                () => {
+                                                    return (
+                                                        Array.from(
+                                                            Array(
+                                                                blockRow * column
+                                                            ).keys()
+                                                        ).map(() => null)
+                                                    )
+                                                }
+                                            )
+                                        );
+                                    }
+                                )()
+                            );
                         }}
                     />
                 </FormGroup>
             </Form>
             <Button onClick={ solve }>Solve</Button>
+            <Button onClick={ clear }>Clear</Button>
             <table>
                 <tbody>
                 <tr>
