@@ -33,7 +33,7 @@ class LoginPage extends Component {
         }
         return (
             <main className="container">
-                <h1>Stack Lang</h1>
+                <h1>Sudoku Solver</h1>
                 <Form onSubmit={login}>
                     <FormGroup>
                         <Label for="un">User Name</Label>
