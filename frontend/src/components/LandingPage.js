@@ -65,7 +65,7 @@ const LandingPage = (props) => {
                 data: data
             }
         axios.post(
-            "http://localhost:8000/solve",
+            `http://${window.location.hostname}:8000/solve`,
             payload
         ).then((res) => {
             if (!res.data.success) {
