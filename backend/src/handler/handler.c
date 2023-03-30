@@ -180,6 +180,32 @@ int solve_handler(HTTPRequest *request, HTTPResponse *response) {
     if (ret) {
         return 1;
     }
+    String buf_val;
+    String *tgt_header;
+    ret = DArrayChar_initialize(&buf, 28);
+    if (ret) {
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf, "Access-Control-Allow-Origin", 28);
+    ret = DArrayChar_initialize(&buf_val, 22);
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf_val, "http://localhost:3000", 22);
+    ret =
+        HashMapStringString_fetch(
+            &response->header,
+            &buf,
+            &tgt_header
+        );
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        DArrayChar_finalize(&buf_val);
+        return 1;
+    }
+    *tgt_header = buf_val;
+
     response->body.json.root->is_null = false;
     response->body.json.root->type = OBJECT;
     ret =
@@ -267,5 +293,146 @@ int solve_handler(HTTPRequest *request, HTTPResponse *response) {
         }
     }
     DArrayChar_finalize(&grid);
+    return 0;
+}
+
+int preflight_handler(HTTPRequest *request, HTTPResponse *response) {
+    if (!request) {
+        return 1;
+    }
+    int ret =
+        HTTPResponse_initialize(
+            response,
+            HTTP_RESPONSE_204,
+            BODY_TYPE_NONE
+        );
+    if (ret) {
+        return 1;
+    }
+    String buf;
+    String buf_val;
+    String *tgt_header;
+    ret = DArrayChar_initialize(&buf, 28);
+    if (ret) {
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf, "Access-Control-Allow-Origin", 28);
+    ret = DArrayChar_initialize(&buf_val, 22);
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf_val, "http://localhost:3000", 22);
+    ret =
+        HashMapStringString_fetch(
+            &response->header,
+            &buf,
+            &tgt_header
+        );
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        DArrayChar_finalize(&buf_val);
+        return 1;
+    }
+    *tgt_header = buf_val;
+
+    ret = DArrayChar_initialize(&buf, 11);
+    if (ret) {
+        puts("fuck");
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf, "Connection", 11);
+    ret = DArrayChar_initialize(&buf_val, 11);
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf_val, "keep-alive", 11);
+    ret =
+        HashMapStringString_fetch(
+            &response->header,
+            &buf,
+            &tgt_header
+        );
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        DArrayChar_finalize(&buf_val);
+        return 1;
+    }
+    *tgt_header = buf_val;
+
+    ret = DArrayChar_initialize(&buf, 29);
+    if (ret) {
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf, "Access-Control-Allow-Methods", 29);
+    ret = DArrayChar_initialize(&buf_val, 5);
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf_val, "POST", 5);
+    ret =
+        HashMapStringString_fetch(
+            &response->header,
+            &buf,
+            &tgt_header
+        );
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        DArrayChar_finalize(&buf_val);
+        return 1;
+    }
+    *tgt_header = buf_val;
+
+    ret = DArrayChar_initialize(&buf, 23);
+    if (ret) {
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf, "Access-Control-Max-Age", 23);
+    ret = DArrayChar_initialize(&buf_val, 6);
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf_val, "86400", 6);
+    ret =
+        HashMapStringString_fetch(
+            &response->header,
+            &buf,
+            &tgt_header
+        );
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        DArrayChar_finalize(&buf_val);
+        return 1;
+    }
+    *tgt_header = buf_val;
+
+    ret = DArrayChar_initialize(&buf, 31);
+    if (ret) {
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf, "Access-Control-Allow-Headers", 29);
+    ret = DArrayChar_initialize(&buf_val, 86);
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        return 1;
+    }
+    DArrayChar_push_back_batch(&buf_val, "Origin, X-Requested-With, Content-Type, Accept, Request, Access-Control-Allow-Headers", 86);
+    ret =
+        HashMapStringString_fetch(
+            &response->header,
+            &buf,
+            &tgt_header
+        );
+    if (ret) {
+        DArrayChar_finalize(&buf);
+        DArrayChar_finalize(&buf_val);
+        return 1;
+    }
+    *tgt_header = buf_val;
+    DArrayChar_initialize(&buf, 10000);
+    HTTPResponse_serialize(response, &buf);
     return 0;
 }

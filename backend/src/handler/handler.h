@@ -4,5 +4,6 @@
 #include <http_server/server.h>
 
 int solve_handler(HTTPRequest *request, HTTPResponse *response);
+int preflight_handler(HTTPRequest *request, HTTPResponse *response);
 
 #endif

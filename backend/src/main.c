@@ -25,6 +25,14 @@ int main(void) {
             solve_handler
         );
     printf("retcode: %d\nmsg: %s\n", ret, http_server_errcode_lookup[ret]);
+    ret =
+        HTTPServer_set_route(
+            &server,
+            "/solve ",
+            HTTP_METHOD_OPTIONS,
+            preflight_handler
+        );
+    printf("retcode: %d\nmsg: %s\n", ret, http_server_errcode_lookup[ret]);
     signal(SIGABRT, sig_handler);
     signal(SIGFPE, sig_handler);
     signal(SIGILL, sig_handler);
