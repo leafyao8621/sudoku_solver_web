@@ -187,12 +187,12 @@ int solve_handler(HTTPRequest *request, HTTPResponse *response) {
         return 1;
     }
     DArrayChar_push_back_batch(&buf, "Access-Control-Allow-Origin", 28);
-    ret = DArrayChar_initialize(&buf_val, 22);
+    ret = DArrayChar_initialize(&buf_val, 2);
     if (ret) {
         DArrayChar_finalize(&buf);
         return 1;
     }
-    DArrayChar_push_back_batch(&buf_val, "http://localhost:3000", 22);
+    DArrayChar_push_back_batch(&buf_val, "*", 2);
     ret =
         HashMapStringString_fetch(
             &response->header,
@@ -317,12 +317,12 @@ int preflight_handler(HTTPRequest *request, HTTPResponse *response) {
         return 1;
     }
     DArrayChar_push_back_batch(&buf, "Access-Control-Allow-Origin", 28);
-    ret = DArrayChar_initialize(&buf_val, 22);
+    ret = DArrayChar_initialize(&buf_val, 2);
     if (ret) {
         DArrayChar_finalize(&buf);
         return 1;
     }
-    DArrayChar_push_back_batch(&buf_val, "http://localhost:3000", 22);
+    DArrayChar_push_back_batch(&buf_val, "*", 2);
     ret =
         HashMapStringString_fetch(
             &response->header,
