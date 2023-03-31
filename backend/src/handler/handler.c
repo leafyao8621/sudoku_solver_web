@@ -14,6 +14,29 @@ ret =\
 if (ret) {\
     return 1;\
 }\
+ret = DArrayChar_initialize(&buf, 28);\
+if (ret) {\
+    return 1;\
+}\
+DArrayChar_push_back_batch(&buf, "Access-Control-Allow-Origin", 28);\
+ret = DArrayChar_initialize(&buf_val, 2);\
+if (ret) {\
+    DArrayChar_finalize(&buf);\
+    return 1;\
+}\
+DArrayChar_push_back_batch(&buf_val, "*", 2);\
+ret =\
+    HashMapStringString_fetch(\
+        &response->header,\
+        &buf,\
+        &tgt_header\
+    );\
+if (ret) {\
+    DArrayChar_finalize(&buf);\
+    DArrayChar_finalize(&buf_val);\
+    return 1;\
+}\
+*tgt_header = buf_val;\
 ret = JSONNodePtr_initialize(&response->body.json.root);\
 response->body.json.root->is_null = false;\
 response->body.json.root->type = OBJECT;\
@@ -55,6 +78,8 @@ int solve_handler(HTTPRequest *request, HTTPResponse *response) {
         return 1;
     }
     String buf;
+    String buf_val;
+    String *tgt_header;
     int ret = DArrayChar_initialize(&buf, 20);
     if (ret) {
         return 1;
@@ -180,8 +205,6 @@ int solve_handler(HTTPRequest *request, HTTPResponse *response) {
     if (ret) {
         return 1;
     }
-    String buf_val;
-    String *tgt_header;
     ret = DArrayChar_initialize(&buf, 28);
     if (ret) {
         return 1;

@@ -70,9 +70,10 @@ const LandingPage = (props) => {
         ).then((res) => {
             if (!res.data.success) {
                 alert("Error!");
+            } else {
+                setData(res.data.result);
+                alert("Success!");
             }
-            setData(res.data.result);
-            alert("Success!");
         }).catch((err) => {
             alert(err);
         })
