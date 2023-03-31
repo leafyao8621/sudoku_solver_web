@@ -37,7 +37,6 @@ if (ret) {\
     return 1;\
 }\
 *tgt_header = buf_val;\
-ret = JSONNodePtr_initialize(&response->body.json.root);\
 response->body.json.root->is_null = false;\
 response->body.json.root->type = OBJECT;\
 ret =\
@@ -205,6 +204,7 @@ int solve_handler(HTTPRequest *request, HTTPResponse *response) {
     if (ret) {
         return 1;
     }
+    DArrayChar_finalize(&buf);
     ret = DArrayChar_initialize(&buf, 28);
     if (ret) {
         return 1;
